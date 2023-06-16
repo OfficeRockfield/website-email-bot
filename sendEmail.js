@@ -1,9 +1,6 @@
 "use strict";
 const nodemailer = require("nodemailer");
 
-/* const axios = require('axios/dist/browser/axios.cjs'); // browser
-const axios = require('axios/dist/node/axios.cjs'); // node */
-
 // async..await is not allowed in global scope, must use a wrapper
 async function main() {
   // Generate test SMTP service account from ethereal.email
@@ -11,15 +8,20 @@ async function main() {
   let testAccount = await nodemailer.createTestAccount();
 
   // create reusable transporter object using the default SMTP transport
-  nodemailer.createTransport({
+  let transporter = nodemailer.createTransport({
+    host: "smtp.ethereal.email",
     port: 587,
-    secure: false, // upgrade later with STARTTLS
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: testAccount.user, // generated ethereal user
+      pass: testAccount.pass, // generated ethereal password
+    },
   });
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
-    from: '"Fred Foo 👻" <website@rockfieldmd.com>', // sender address
-    to: "gaughraneoin@yahoo.ie", // list of receivers
+    from: '"Fred Foo 👻" <foo@example.com>', // sender address
+    to: "eoin@rockfieldmd.com, gaughraneoin@rockfieldmd.com", // list of receivers
     subject: "Hello ✔", // Subject line
     text: "Hello world?", // plain text body
     html: "<b>Hello world?</b>", // html body
